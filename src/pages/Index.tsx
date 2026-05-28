@@ -46,19 +46,19 @@ const T = {
       { id: 2, name: "Медная катанка 8 мм", description: "ГОСТ 53803-2010, Cu ≥ 99,9%", unit: "тн", qty: 2000 },
       { id: 3, name: "Медная шина / полоса", description: "ГОСТ 434-78, различные сечения", unit: "тн", qty: 2000 },
     ],
-    delivery: "30–45 рабочих дней с момента оплаты",
+    delivery: "Согласно договору",
     warranty: "Сертификат качества на каждую партию",
-    payment: "30% аванс, 70% по факту отгрузки",
+    payment: "Согласно договору",
     validUntil: "28 августа 2026 г.",
     extra: "Цена фиксируется на дату подписания договора. Возможна поставка DDP, CIF, FOB по согласованию. Минимальная партия — 20 тонн.",
     directorTitle: "Генеральный директор",
-    directorName: "Иванов Иван Иванович",
+    directorName: "Погосян Эрик",
     phone: "+7 933 000-07-02",
     email: "REAL.GROUP2020@MAIL.RU",
     website: "realgroup.pw",
     address: "г. Москва, ул. Металлургов, д. 12, оф. 301",
-    inn: "7701234567",
-    ogrn: "1027700000000",
+    inn: "9724242160",
+    ogrn: "1267700177029",
   },
   en: {
     fontClass: "font-body",
@@ -101,19 +101,19 @@ const T = {
       { id: 2, name: "Copper Rod 8mm", description: "GOST 53803-2010, Cu ≥ 99.9%", unit: "MT", qty: 2000 },
       { id: 3, name: "Copper Bus / Strip", description: "GOST 434-78, various cross-sections", unit: "MT", qty: 2000 },
     ],
-    delivery: "30–45 business days from payment",
+    delivery: "As per contract",
     warranty: "Quality certificate for each batch",
-    payment: "30% advance, 70% upon shipment",
+    payment: "As per contract",
     validUntil: "August 28, 2026",
     extra: "Price is fixed at contract signing date. DDP, CIF, FOB delivery available by agreement. Minimum order — 20 metric tons.",
     directorTitle: "General Director",
-    directorName: "Ivan Ivanov",
+    directorName: "Erik Pogosyan",
     phone: "+7 933 000-07-02",
     email: "REAL.GROUP2020@MAIL.RU",
     website: "realgroup.pw",
     address: "Moscow, Russia",
-    inn: "TIN: 7701234567",
-    ogrn: "OGRN: 1027700000000",
+    inn: "TIN: 9724242160",
+    ogrn: "OGRN: 1267700177029",
   },
   hi: {
     fontClass: "font-devanagari",
@@ -156,19 +156,19 @@ const T = {
       { id: 2, name: "कॉपर रॉड 8mm", description: "GOST 53803-2010, Cu ≥ 99.9%", unit: "MT", qty: 2000 },
       { id: 3, name: "कॉपर बस / स्ट्रिप", description: "GOST 434-78, विभिन्न खंड", unit: "MT", qty: 2000 },
     ],
-    delivery: "भुगतान के बाद 30–45 कार्य दिवस",
+    delivery: "अनुबंध के अनुसार",
     warranty: "प्रत्येक बैच के लिए गुणवत्ता प्रमाण पत्र",
-    payment: "30% अग्रिम, 70% शिपमेंट पर",
+    payment: "अनुबंध के अनुसार",
     validUntil: "28 अगस्त 2026",
     extra: "अनुबंध हस्ताक्षर की तारीख पर मूल्य निश्चित होता है। DDP, CIF, FOB डिलीवरी उपलब्ध। न्यूनतम ऑर्डर — 20 मीट्रिक टन।",
     directorTitle: "महानिदेशक",
-    directorName: "Ivan Ivanov",
+    directorName: "Erik Pogosyan",
     phone: "+7 933 000-07-02",
     email: "REAL.GROUP2020@MAIL.RU",
     website: "realgroup.pw",
     address: "मॉस्को, रूस",
-    inn: "TIN: 7701234567",
-    ogrn: "OGRN: 1027700000000",
+    inn: "TIN: 9724242160",
+    ogrn: "OGRN: 1267700177029",
   },
 };
 
@@ -451,11 +451,8 @@ export default function Index() {
                 </div>
               ))}
               <div className="mt-6 pt-6 border-t border-[var(--kp-gold)]/20">
-                <div className="text-white/40 text-xs tracking-widest uppercase mb-2">{t.signatureLabel}</div>
                 <EditableField value={f.directorTitle} onChange={(v) => setF("directorTitle", v)} className="text-white/60 text-xs" />
                 <EditableField value={f.directorName} onChange={(v) => setF("directorName", v)} className="text-white font-semibold mt-1" />
-                <div className="mt-4 border-b border-white/20 w-48" />
-                <div className="text-white/30 text-xs mt-1">{t.signatureSub}</div>
               </div>
             </div>
           </div>
