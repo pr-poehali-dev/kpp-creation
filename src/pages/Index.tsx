@@ -42,9 +42,9 @@ const T = {
     clientContact: "Директору по закупкам",
     intro: "Уважаемые партнёры! ООО «РЕАЛ ГРУПП» предлагает Вашему вниманию настоящее коммерческое предложение на поставку меди высокой степени очистки. Наши цены ниже биржевых котировок LME, а условия сотрудничества — максимально гибкие. Готовы рассмотреть долгосрочный контракт.",
     services: [
-      { id: 1, name: "Медь катодная М00К", description: "ГОСТ 859-2014, чистота Cu ≥ 99,99%", unit: "тн", qty: 100, price: 820000 },
-      { id: 2, name: "Медная катанка 8 мм", description: "ГОСТ 53803-2010, Cu ≥ 99,9%", unit: "тн", qty: 50, price: 890000 },
-      { id: 3, name: "Медная шина / полоса", description: "ГОСТ 434-78, различные сечения", unit: "тн", qty: 20, price: 950000 },
+      { id: 1, name: "Медь катодная М00К", description: "ГОСТ 859-2014, чистота Cu ≥ 99,99%", unit: "тн", qty: 2000 },
+      { id: 2, name: "Медная катанка 8 мм", description: "ГОСТ 53803-2010, Cu ≥ 99,9%", unit: "тн", qty: 2000 },
+      { id: 3, name: "Медная шина / полоса", description: "ГОСТ 434-78, различные сечения", unit: "тн", qty: 2000 },
     ],
     delivery: "30–45 рабочих дней с момента оплаты",
     warranty: "Сертификат качества на каждую партию",
@@ -59,8 +59,6 @@ const T = {
     address: "г. Москва, ул. Металлургов, д. 12, оф. 301",
     inn: "7701234567",
     ogrn: "1027700000000",
-    vatRate: 0.20,
-    currency: "₽",
   },
   en: {
     fontClass: "font-body",
@@ -99,9 +97,9 @@ const T = {
     clientContact: "Head of Procurement",
     intro: "Dear Partners, REAL GROUP LLC is pleased to present this commercial offer for the supply of high-purity copper. Our prices are below LME exchange quotes and cooperation terms are highly flexible. We are ready to consider a long-term supply contract.",
     services: [
-      { id: 1, name: "Copper Cathode M00K", description: "GOST 859-2014, Cu purity ≥ 99.99%", unit: "MT", qty: 100, price: 9200 },
-      { id: 2, name: "Copper Rod 8mm", description: "GOST 53803-2010, Cu ≥ 99.9%", unit: "MT", qty: 50, price: 9800 },
-      { id: 3, name: "Copper Bus / Strip", description: "GOST 434-78, various cross-sections", unit: "MT", qty: 20, price: 10500 },
+      { id: 1, name: "Copper Cathode M00K", description: "GOST 859-2014, Cu purity ≥ 99.99%", unit: "MT", qty: 2000 },
+      { id: 2, name: "Copper Rod 8mm", description: "GOST 53803-2010, Cu ≥ 99.9%", unit: "MT", qty: 2000 },
+      { id: 3, name: "Copper Bus / Strip", description: "GOST 434-78, various cross-sections", unit: "MT", qty: 2000 },
     ],
     delivery: "30–45 business days from payment",
     warranty: "Quality certificate for each batch",
@@ -116,8 +114,6 @@ const T = {
     address: "Moscow, Russia",
     inn: "TIN: 7701234567",
     ogrn: "OGRN: 1027700000000",
-    vatRate: 0.20,
-    currency: "$",
   },
   hi: {
     fontClass: "font-devanagari",
@@ -156,9 +152,9 @@ const T = {
     clientContact: "खरीद प्रमुख",
     intro: "प्रिय साझेदारों, REAL GROUP LLC आपको उच्च शुद्धता वाले तांबे की आपूर्ति के लिए यह वाणिज्यिक प्रस्ताव प्रस्तुत करता है। हमारी कीमतें LME एक्सचेंज कोटेशन से कम हैं और सहयोग की शर्तें अत्यंत लचीली हैं। हम दीर्घकालिक आपूर्ति अनुबंध पर विचार करने के लिए तैयार हैं।",
     services: [
-      { id: 1, name: "कॉपर कैथोड M00K", description: "GOST 859-2014, Cu शुद्धता ≥ 99.99%", unit: "MT", qty: 100, price: 9200 },
-      { id: 2, name: "कॉपर रॉड 8mm", description: "GOST 53803-2010, Cu ≥ 99.9%", unit: "MT", qty: 50, price: 9800 },
-      { id: 3, name: "कॉपर बस / स्ट्रिप", description: "GOST 434-78, विभिन्न खंड", unit: "MT", qty: 20, price: 10500 },
+      { id: 1, name: "कॉपर कैथोड M00K", description: "GOST 859-2014, Cu शुद्धता ≥ 99.99%", unit: "MT", qty: 2000 },
+      { id: 2, name: "कॉपर रॉड 8mm", description: "GOST 53803-2010, Cu ≥ 99.9%", unit: "MT", qty: 2000 },
+      { id: 3, name: "कॉपर बस / स्ट्रिप", description: "GOST 434-78, विभिन्न खंड", unit: "MT", qty: 2000 },
     ],
     delivery: "भुगतान के बाद 30–45 कार्य दिवस",
     warranty: "प्रत्येक बैच के लिए गुणवत्ता प्रमाण पत्र",
@@ -173,12 +169,10 @@ const T = {
     address: "मॉस्को, रूस",
     inn: "TIN: 7701234567",
     ogrn: "OGRN: 1027700000000",
-    vatRate: 0.18,
-    currency: "$",
   },
 };
 
-interface ServiceItem { id: number; name: string; description: string; unit: string; qty: number; price: number; }
+interface ServiceItem { id: number; name: string; description: string; unit: string; qty: number; }
 type LangFields = typeof T.ru & { services: ServiceItem[] };
 
 function EditableField({ value, onChange, className = "", multiline = false }: {
@@ -195,11 +189,6 @@ function EditableField({ value, onChange, className = "", multiline = false }: {
     <input value={value} onChange={(e) => onChange(e.target.value)}
       className={`bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none transition-colors duration-200 w-full ${className}`} />
   );
-}
-
-function formatMoney(n: number, currency: string) {
-  if (currency === "₽") return n.toLocaleString("ru-RU") + " ₽";
-  return "$" + n.toLocaleString("en-US");
 }
 
 export default function Index() {
@@ -237,7 +226,7 @@ export default function Index() {
     setFields(prev => ({
       ...prev, [lang]: {
         ...prev[lang],
-        services: [...prev[lang].services, { id: newId, name: "—", description: "—", unit: "MT", qty: 1, price: 0 }],
+        services: [...prev[lang].services, { id: newId, name: "—", description: "—", unit: "MT", qty: 2000 }],
       },
     }));
   };
@@ -247,9 +236,7 @@ export default function Index() {
       setFields(prev => ({ ...prev, [lang]: { ...prev[lang], services: prev[lang].services.filter(s => s.id !== id) } }));
   };
 
-  const subtotal = f.services.reduce((acc, s) => acc + s.qty * s.price, 0);
-  const vat = Math.round(subtotal * f.vatRate);
-  const total = subtotal + vat;
+
 
   const langLabels = [
     { id: "ru" as Lang, label: "РУС", flag: "🇷🇺" },
@@ -382,9 +369,7 @@ export default function Index() {
                   <th className="text-left py-2 pr-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-8">№</th>
                   <th className="text-left py-2 pr-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase">{t.composition}</th>
                   <th className="text-center py-2 px-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-16">{t.unit}</th>
-                  <th className="text-center py-2 px-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-16">{t.qty}</th>
-                  <th className="text-right py-2 pl-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-32">{t.price}</th>
-                  <th className="text-right py-2 pl-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-32">{t.sum}</th>
+                  <th className="text-center py-2 px-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-32">{t.qty}</th>
                   <th className="no-print w-8" />
                 </tr>
               </thead>
@@ -402,15 +387,7 @@ export default function Index() {
                     <td className="py-3 px-3 text-center">
                       <input type="number" min={1} value={s.qty}
                         onChange={(e) => updateService(s.id, "qty", Number(e.target.value))}
-                        className="bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none w-full text-center text-[var(--kp-text)] transition-colors duration-200" />
-                    </td>
-                    <td className="py-3 pl-3 text-right">
-                      <input type="number" min={0} value={s.price}
-                        onChange={(e) => updateService(s.id, "price", Number(e.target.value))}
-                        className="bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none w-full text-right text-[var(--kp-text)] transition-colors duration-200" />
-                    </td>
-                    <td className="py-3 pl-3 text-right font-semibold text-[var(--kp-navy)] whitespace-nowrap">
-                      {formatMoney(s.qty * s.price, f.currency)}
+                        className="bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none w-full text-center text-[var(--kp-text)] font-semibold transition-colors duration-200" />
                     </td>
                     <td className="no-print py-3 pl-2">
                       <button onClick={() => removeService(s.id)}
@@ -424,23 +401,7 @@ export default function Index() {
             </table>
           </div>
 
-          {/* Totals */}
-          <div className="mt-6 flex justify-end">
-            <div className="w-full max-w-xs">
-              <div className="flex justify-between py-2 text-sm text-[var(--kp-muted)] border-b border-[var(--kp-line)]">
-                <span>{t.subtotal}</span>
-                <span className="font-semibold text-[var(--kp-text)]">{formatMoney(subtotal, f.currency)}</span>
-              </div>
-              <div className="flex justify-between py-2 text-sm text-[var(--kp-muted)] border-b border-[var(--kp-line)]">
-                <span>{t.vat}</span>
-                <span className="font-semibold text-[var(--kp-text)]">{formatMoney(vat, f.currency)}</span>
-              </div>
-              <div className="flex justify-between py-3 font-bold bg-[var(--kp-navy)] text-white px-4 mt-2">
-                <span className="font-display tracking-wide uppercase text-sm">{t.total}</span>
-                <span className="text-[var(--kp-gold)]">{formatMoney(total, f.currency)}</span>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         {/* TERMS */}
