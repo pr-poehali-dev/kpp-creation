@@ -22,6 +22,7 @@ export default {
 			fontFamily: {
 				display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
 				body: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+				devanagari: ['"Noto Sans Devanagari"', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

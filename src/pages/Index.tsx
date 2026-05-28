@@ -1,162 +1,343 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
-interface ServiceItem {
-  id: number;
-  name: string;
-  description: string;
-  unit: string;
-  qty: number;
-  price: number;
-}
+type Lang = "ru" | "en" | "hi";
 
-const defaultServices: ServiceItem[] = [
-  { id: 1, name: "Разработка веб-сайта", description: "Дизайн и вёрстка корпоративного сайта под ключ", unit: "шт.", qty: 1, price: 120000 },
-  { id: 2, name: "SEO-оптимизация", description: "Техническая оптимизация и семантическое ядро", unit: "мес.", qty: 3, price: 25000 },
-  { id: 3, name: "Техническая поддержка", description: "Ежемесячное сопровождение и обновление контента", unit: "мес.", qty: 6, price: 15000 },
-];
+// ─── Translations ────────────────────────────────────────────────────────────
+const T = {
+  ru: {
+    fontClass: "font-body",
+    badge: "Коммерческое предложение",
+    editMode: "Режим редактирования",
+    editHint: "— нажмите на любое поле для изменения",
+    downloadPdf: "Скачать PDF",
+    toWhom: "Кому:",
+    whyUs: "Почему выбирают нас",
+    composition: "Состав предложения",
+    addRow: "Добавить строку",
+    unit: "Ед.",
+    qty: "Кол-во",
+    price: "Цена",
+    sum: "Сумма",
+    subtotal: "Подытог (без НДС)",
+    vat: "НДС 20%",
+    total: "Итого к оплате",
+    terms: "Условия сотрудничества",
+    deliveryLabel: "Срок поставки",
+    warrantyLabel: "Гарантийный период",
+    paymentLabel: "Условия оплаты",
+    validLabel: "Предложение действительно до",
+    extraLabel: "Дополнительные условия",
+    contacts: "Контактная информация",
+    requisites: "Реквизиты",
+    signatureLabel: "Подпись уполномоченного лица",
+    signatureSub: "подпись / дата",
+    legalNote: "Документ создан в цифровом формате и имеет юридическую силу",
+    advantages: ["10 лет на рынке", "Более 500 сделок", "Гарантия качества", "Персональный менеджер"],
+    companyName: "ООО «РЕАЛ ГРУПП»",
+    tagline: "Поставки меди — цены ниже рынка LME",
+    kpNumber: "КП-2026-001",
+    kpDate: "28 мая 2026 г.",
+    clientName: "Finolex Cables Ltd.",
+    clientContact: "Директору по закупкам",
+    intro: "Уважаемые партнёры! ООО «РЕАЛ ГРУПП» предлагает Вашему вниманию настоящее коммерческое предложение на поставку меди высокой степени очистки. Наши цены ниже биржевых котировок LME, а условия сотрудничества — максимально гибкие. Готовы рассмотреть долгосрочный контракт.",
+    services: [
+      { id: 1, name: "Медь катодная М00К", description: "ГОСТ 859-2014, чистота Cu ≥ 99,99%", unit: "тн", qty: 100, price: 820000 },
+      { id: 2, name: "Медная катанка 8 мм", description: "ГОСТ 53803-2010, Cu ≥ 99,9%", unit: "тн", qty: 50, price: 890000 },
+      { id: 3, name: "Медная шина / полоса", description: "ГОСТ 434-78, различные сечения", unit: "тн", qty: 20, price: 950000 },
+    ],
+    delivery: "30–45 рабочих дней с момента оплаты",
+    warranty: "Сертификат качества на каждую партию",
+    payment: "30% аванс, 70% по факту отгрузки",
+    validUntil: "28 августа 2026 г.",
+    extra: "Цена фиксируется на дату подписания договора. Возможна поставка DDP, CIF, FOB по согласованию. Минимальная партия — 20 тонн.",
+    directorTitle: "Генеральный директор",
+    directorName: "Иванов Иван Иванович",
+    phone: "+7 (495) 123-45-67",
+    email: "trade@realgroup.ru",
+    website: "www.realgroup.ru",
+    address: "г. Москва, ул. Металлургов, д. 12, оф. 301",
+    inn: "7701234567",
+    ogrn: "1027700000000",
+    vatRate: 0.20,
+    currency: "₽",
+  },
+  en: {
+    fontClass: "font-body",
+    badge: "Commercial Offer",
+    editMode: "Edit Mode",
+    editHint: "— click any field to change",
+    downloadPdf: "Download PDF",
+    toWhom: "To:",
+    whyUs: "Why Choose Us",
+    composition: "Offer Details",
+    addRow: "Add row",
+    unit: "Unit",
+    qty: "Qty",
+    price: "Price",
+    sum: "Amount",
+    subtotal: "Subtotal (excl. VAT)",
+    vat: "VAT 20%",
+    total: "Total Payable",
+    terms: "Terms & Conditions",
+    deliveryLabel: "Delivery Time",
+    warrantyLabel: "Quality Guarantee",
+    paymentLabel: "Payment Terms",
+    validLabel: "Offer Valid Until",
+    extraLabel: "Additional Terms",
+    contacts: "Contact Information",
+    requisites: "Company Details",
+    signatureLabel: "Authorised Signatory",
+    signatureSub: "signature / date",
+    legalNote: "This document is created in digital format and has legal validity",
+    advantages: ["10 years in market", "500+ deals closed", "Quality certified", "Dedicated manager"],
+    companyName: "REAL GROUP LLC",
+    tagline: "Copper supply — below LME market price",
+    kpNumber: "CO-2026-001",
+    kpDate: "May 28, 2026",
+    clientName: "Finolex Cables Ltd.",
+    clientContact: "Head of Procurement",
+    intro: "Dear Partners, REAL GROUP LLC is pleased to present this commercial offer for the supply of high-purity copper. Our prices are below LME exchange quotes and cooperation terms are highly flexible. We are ready to consider a long-term supply contract.",
+    services: [
+      { id: 1, name: "Copper Cathode M00K", description: "GOST 859-2014, Cu purity ≥ 99.99%", unit: "MT", qty: 100, price: 9200 },
+      { id: 2, name: "Copper Rod 8mm", description: "GOST 53803-2010, Cu ≥ 99.9%", unit: "MT", qty: 50, price: 9800 },
+      { id: 3, name: "Copper Bus / Strip", description: "GOST 434-78, various cross-sections", unit: "MT", qty: 20, price: 10500 },
+    ],
+    delivery: "30–45 business days from payment",
+    warranty: "Quality certificate for each batch",
+    payment: "30% advance, 70% upon shipment",
+    validUntil: "August 28, 2026",
+    extra: "Price is fixed at contract signing date. DDP, CIF, FOB delivery available by agreement. Minimum order — 20 metric tons.",
+    directorTitle: "General Director",
+    directorName: "Ivan Ivanov",
+    phone: "+7 (495) 123-45-67",
+    email: "trade@realgroup.ru",
+    website: "www.realgroup.ru",
+    address: "Moscow, Metallurgov st. 12, office 301, Russia",
+    inn: "TIN: 7701234567",
+    ogrn: "OGRN: 1027700000000",
+    vatRate: 0.20,
+    currency: "$",
+  },
+  hi: {
+    fontClass: "font-devanagari",
+    badge: "वाणिज्यिक प्रस्ताव",
+    editMode: "संपादन मोड",
+    editHint: "— किसी भी फ़ील्ड पर क्लिक करें",
+    downloadPdf: "PDF डाउनलोड करें",
+    toWhom: "प्रति:",
+    whyUs: "हमें क्यों चुनें",
+    composition: "प्रस्ताव विवरण",
+    addRow: "पंक्ति जोड़ें",
+    unit: "इकाई",
+    qty: "मात्रा",
+    price: "मूल्य",
+    sum: "राशि",
+    subtotal: "उप-कुल (GST रहित)",
+    vat: "GST 18%",
+    total: "कुल देय राशि",
+    terms: "सहयोग की शर्तें",
+    deliveryLabel: "डिलीवरी समय",
+    warrantyLabel: "गुणवत्ता गारंटी",
+    paymentLabel: "भुगतान की शर्तें",
+    validLabel: "प्रस्ताव वैध है तक",
+    extraLabel: "अतिरिक्त शर्तें",
+    contacts: "संपर्क जानकारी",
+    requisites: "कंपनी विवरण",
+    signatureLabel: "अधिकृत हस्ताक्षरकर्ता",
+    signatureSub: "हस्ताक्षर / तारीख",
+    legalNote: "यह दस्तावेज़ डिजिटल प्रारूप में बनाया गया है और कानूनी रूप से वैध है",
+    advantages: ["बाज़ार में 10 वर्ष", "500+ सौदे पूर्ण", "गुणवत्ता प्रमाणित", "समर्पित प्रबंधक"],
+    companyName: "REAL GROUP LLC",
+    tagline: "तांबा आपूर्ति — LME बाज़ार मूल्य से कम",
+    kpNumber: "CO-2026-001",
+    kpDate: "28 मई 2026",
+    clientName: "Finolex Cables Ltd.",
+    clientContact: "खरीद प्रमुख",
+    intro: "प्रिय साझेदारों, REAL GROUP LLC आपको उच्च शुद्धता वाले तांबे की आपूर्ति के लिए यह वाणिज्यिक प्रस्ताव प्रस्तुत करता है। हमारी कीमतें LME एक्सचेंज कोटेशन से कम हैं और सहयोग की शर्तें अत्यंत लचीली हैं। हम दीर्घकालिक आपूर्ति अनुबंध पर विचार करने के लिए तैयार हैं।",
+    services: [
+      { id: 1, name: "कॉपर कैथोड M00K", description: "GOST 859-2014, Cu शुद्धता ≥ 99.99%", unit: "MT", qty: 100, price: 9200 },
+      { id: 2, name: "कॉपर रॉड 8mm", description: "GOST 53803-2010, Cu ≥ 99.9%", unit: "MT", qty: 50, price: 9800 },
+      { id: 3, name: "कॉपर बस / स्ट्रिप", description: "GOST 434-78, विभिन्न खंड", unit: "MT", qty: 20, price: 10500 },
+    ],
+    delivery: "भुगतान के बाद 30–45 कार्य दिवस",
+    warranty: "प्रत्येक बैच के लिए गुणवत्ता प्रमाण पत्र",
+    payment: "30% अग्रिम, 70% शिपमेंट पर",
+    validUntil: "28 अगस्त 2026",
+    extra: "अनुबंध हस्ताक्षर की तारीख पर मूल्य निश्चित होता है। DDP, CIF, FOB डिलीवरी उपलब्ध। न्यूनतम ऑर्डर — 20 मीट्रिक टन।",
+    directorTitle: "महानिदेशक",
+    directorName: "Ivan Ivanov",
+    phone: "+7 (495) 123-45-67",
+    email: "trade@realgroup.ru",
+    website: "www.realgroup.ru",
+    address: "मॉस्को, मेटल्लर्गोव स्ट्रीट 12, कार्यालय 301, रूस",
+    inn: "TIN: 7701234567",
+    ogrn: "OGRN: 1027700000000",
+    vatRate: 0.18,
+    currency: "$",
+  },
+};
 
-function EditableField({ value, onChange, className = "", multiline = false, placeholder = "" }: {
-  value: string; onChange: (v: string) => void; className?: string; multiline?: boolean; placeholder?: string;
+interface ServiceItem { id: number; name: string; description: string; unit: string; qty: number; price: number; }
+type LangFields = typeof T.ru & { services: ServiceItem[] };
+
+function EditableField({ value, onChange, className = "", multiline = false }: {
+  value: string; onChange: (v: string) => void; className?: string; multiline?: boolean;
 }) {
   if (multiline) {
     return (
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+      <textarea value={value} onChange={(e) => onChange(e.target.value)}
         className={`bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none resize-none transition-colors duration-200 w-full ${className}`}
-        rows={3}
-      />
+        rows={3} />
     );
   }
   return (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className={`bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none transition-colors duration-200 w-full ${className}`}
-    />
+    <input value={value} onChange={(e) => onChange(e.target.value)}
+      className={`bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none transition-colors duration-200 w-full ${className}`} />
   );
 }
 
-function formatMoney(n: number) {
-  return n.toLocaleString("ru-RU") + " ₽";
+function formatMoney(n: number, currency: string) {
+  if (currency === "₽") return n.toLocaleString("ru-RU") + " ₽";
+  return "$" + n.toLocaleString("en-US");
 }
 
 export default function Index() {
-  const printRef = useRef<HTMLDivElement>(null);
+  const [lang, setLang] = useState<Lang>("ru");
 
-  const [companyName, setCompanyName] = useState("ООО «Профессиональные Решения»");
-  const [companyTagline, setCompanyTagline] = useState("Комплексные бизнес-услуги высшего класса");
-  const [kpNumber, setKpNumber] = useState("КП-2026-047");
-  const [kpDate, setKpDate] = useState("28 мая 2026 г.");
-  const [clientName, setClientName] = useState("ООО «Клиент»");
-  const [clientContact, setClientContact] = useState("Иванову И.И.");
-  const [introText, setIntroText] = useState("Уважаемый партнёр! Представляем Вашему вниманию настоящее коммерческое предложение на оказание профессиональных услуг. Мы уверены, что наше сотрудничество принесёт взаимную выгоду и долгосрочный результат.");
+  const [fields, setFields] = useState<Record<Lang, LangFields>>({
+    ru: { ...T.ru, services: T.ru.services.map(s => ({ ...s })) },
+    en: { ...T.en, services: T.en.services.map(s => ({ ...s })) },
+    hi: { ...T.hi, services: T.hi.services.map(s => ({ ...s })) },
+  });
 
-  const [services, setServices] = useState<ServiceItem[]>(defaultServices);
+  const f = fields[lang];
+  const t = T[lang];
 
-  const [deliveryDays, setDeliveryDays] = useState("30 рабочих дней");
-  const [warranty, setWarranty] = useState("12 месяцев");
-  const [paymentTerms, setPaymentTerms] = useState("50% аванс при подписании договора, 50% по факту выполнения работ");
-  const [validUntil, setValidUntil] = useState("28 августа 2026 г.");
-  const [extraTerms, setExtraTerms] = useState("Все работы выполняются в строгом соответствии с техническим заданием. При необходимости возможно поэтапное выполнение и отдельный график оплаты.");
+  const setF = (key: string, value: string) =>
+    setFields(prev => ({ ...prev, [lang]: { ...prev[lang], [key]: value } }));
 
-  const [directorName, setDirectorName] = useState("Петров Александр Сергеевич");
-  const [directorTitle, setDirectorTitle] = useState("Генеральный директор");
-  const [phone, setPhone] = useState("+7 (495) 123-45-67");
-  const [email, setEmail] = useState("info@company.ru");
-  const [website, setWebsite] = useState("www.company.ru");
-  const [inn, setInn] = useState("7701234567");
-  const [ogrn, setOgrn] = useState("1027700000000");
-  const [address, setAddress] = useState("г. Москва, ул. Деловая, д. 1, оф. 100");
+  const setAdv = (i: number, value: string) =>
+    setFields(prev => {
+      const adv = [...prev[lang].advantages];
+      adv[i] = value;
+      return { ...prev, [lang]: { ...prev[lang], advantages: adv } };
+    });
 
-  const [advantage1, setAdvantage1] = useState("10 лет на рынке");
-  const [advantage2, setAdvantage2] = useState("Более 500 реализованных проектов");
-  const [advantage3, setAdvantage3] = useState("Гарантия результата");
-  const [advantage4, setAdvantage4] = useState("Персональный менеджер");
-
-  const updateService = (id: number, field: keyof ServiceItem, value: string | number) => {
-    setServices(prev => prev.map(s => s.id === id ? { ...s, [field]: value } : s));
-  };
+  const updateService = (id: number, field: keyof ServiceItem, value: string | number) =>
+    setFields(prev => ({
+      ...prev, [lang]: {
+        ...prev[lang],
+        services: prev[lang].services.map(s => s.id === id ? { ...s, [field]: value } : s),
+      },
+    }));
 
   const addService = () => {
-    const newId = Math.max(...services.map(s => s.id)) + 1;
-    setServices(prev => [...prev, { id: newId, name: "Новая услуга", description: "Описание услуги", unit: "шт.", qty: 1, price: 0 }]);
+    const newId = Math.max(...f.services.map(s => s.id)) + 1;
+    setFields(prev => ({
+      ...prev, [lang]: {
+        ...prev[lang],
+        services: [...prev[lang].services, { id: newId, name: "—", description: "—", unit: "MT", qty: 1, price: 0 }],
+      },
+    }));
   };
 
   const removeService = (id: number) => {
-    if (services.length > 1) setServices(prev => prev.filter(s => s.id !== id));
+    if (f.services.length > 1)
+      setFields(prev => ({ ...prev, [lang]: { ...prev[lang], services: prev[lang].services.filter(s => s.id !== id) } }));
   };
 
-  const subtotal = services.reduce((acc, s) => acc + s.qty * s.price, 0);
-  const vat = Math.round(subtotal * 0.2);
+  const subtotal = f.services.reduce((acc, s) => acc + s.qty * s.price, 0);
+  const vat = Math.round(subtotal * f.vatRate);
   const total = subtotal + vat;
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const langLabels = [
+    { id: "ru" as Lang, label: "РУС", flag: "🇷🇺" },
+    { id: "en" as Lang, label: "ENG", flag: "🇬🇧" },
+    { id: "hi" as Lang, label: "हिंदी", flag: "🇮🇳" },
+  ];
+
+  const advIcons = ["Award", "TrendingUp", "ShieldCheck", "UserCheck"];
+  const contactFields = [
+    { icon: "Phone", key: "phone" },
+    { icon: "Mail", key: "email" },
+    { icon: "Globe", key: "website" },
+    { icon: "MapPin", key: "address" },
+  ];
+  const termFields = [
+    { label: t.deliveryLabel, key: "delivery", icon: "Truck" },
+    { label: t.warrantyLabel, key: "warranty", icon: "ShieldCheck" },
+    { label: t.paymentLabel, key: "payment", icon: "CreditCard" },
+    { label: t.validLabel, key: "validUntil", icon: "Calendar" },
+  ];
 
   return (
-    <div className="min-h-screen bg-[var(--kp-bg)] font-body">
-      {/* Toolbar */}
-      <div className="no-print fixed top-0 left-0 right-0 z-50 bg-[var(--kp-navy)] border-b border-[var(--kp-gold)]/30 px-6 py-3 flex items-center justify-between shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-[var(--kp-gold)] animate-pulse" />
-          <span className="text-[var(--kp-gold)] font-display text-sm tracking-widest uppercase">Режим редактирования</span>
-          <span className="text-white/40 text-xs">— нажмите на любое поле для изменения</span>
+    <div className={`min-h-screen bg-[var(--kp-bg)] ${f.fontClass}`}>
+
+      {/* ── Toolbar ── */}
+      <div className="no-print fixed top-0 left-0 right-0 z-50 bg-[var(--kp-navy)] border-b border-[var(--kp-gold)]/30 px-4 md:px-6 py-3 flex items-center justify-between shadow-lg gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-2 h-2 rounded-full bg-[var(--kp-gold)] animate-pulse shrink-0" />
+          <span className="text-[var(--kp-gold)] font-display text-sm tracking-widest uppercase truncate">{t.editMode}</span>
+          <span className="text-white/40 text-xs hidden lg:inline shrink-0">{t.editHint}</span>
         </div>
-        <button
-          onClick={handlePrint}
-          className="flex items-center gap-2 bg-[var(--kp-gold)] hover:bg-[var(--kp-gold-light)] text-[var(--kp-navy)] font-display font-semibold text-sm px-5 py-2 tracking-wider uppercase transition-all duration-200 hover:shadow-[0_0_20px_rgba(180,145,80,0.4)]"
-        >
-          <Icon name="Download" size={16} />
-          Скачать PDF
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Language switcher */}
+          <div className="flex border border-[var(--kp-gold)]/30 overflow-hidden">
+            {langLabels.map(l => (
+              <button key={l.id} onClick={() => setLang(l.id)}
+                className={`px-3 py-1.5 text-xs font-semibold tracking-wider transition-all duration-200 flex items-center gap-1
+                  ${lang === l.id ? "bg-[var(--kp-gold)] text-[var(--kp-navy)]" : "text-white/60 hover:text-white hover:bg-white/10"}`}>
+                <span>{l.flag}</span>
+                <span className="hidden sm:inline">{l.label}</span>
+              </button>
+            ))}
+          </div>
+          <button onClick={() => window.print()}
+            className="flex items-center gap-2 bg-[var(--kp-gold)] hover:bg-[var(--kp-gold-light)] text-[var(--kp-navy)] font-display font-semibold text-sm px-4 py-2 tracking-wider uppercase transition-all duration-200 hover:shadow-[0_0_20px_rgba(180,145,80,0.4)]">
+            <Icon name="Download" size={16} />
+            <span className="hidden sm:inline">{t.downloadPdf}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Document */}
-      <div ref={printRef} className="kp-document max-w-4xl mx-auto pt-20 pb-16 px-6 no-print:pt-24">
+      {/* ── Document ── */}
+      <div className="kp-document max-w-4xl mx-auto pt-20 pb-16 px-4 md:px-6">
 
         {/* HEADER */}
-        <div className="bg-[var(--kp-navy)] text-white px-10 py-10 relative overflow-hidden">
+        <div className="bg-[var(--kp-navy)] text-white px-6 md:px-10 py-10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 border border-[var(--kp-gold)]/20 rounded-full translate-x-32 -translate-y-32 pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-40 h-40 border border-[var(--kp-gold)]/10 rounded-full -translate-x-20 translate-y-20 pointer-events-none" />
+          <div className="absolute right-10 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[var(--kp-gold)]/40 to-transparent pointer-events-none" />
 
-          <div className="relative flex items-start justify-between gap-6">
-            <div className="flex-1">
-              <div className="text-[var(--kp-gold)] text-xs tracking-[0.3em] uppercase mb-2 font-display">Коммерческое предложение</div>
-              <EditableField
-                value={companyName}
-                onChange={setCompanyName}
-                className="font-display text-3xl font-bold text-white tracking-tight leading-tight"
-              />
-              <EditableField
-                value={companyTagline}
-                onChange={setCompanyTagline}
-                className="text-white/60 text-sm mt-2 tracking-wide"
-              />
+          <div className="relative flex items-start justify-between gap-6 flex-wrap">
+            <div className="flex-1 min-w-48">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-6 h-6 bg-[var(--kp-gold)] flex items-center justify-center shrink-0">
+                  <Icon name="Zap" size={13} className="text-[var(--kp-navy)]" />
+                </div>
+                <div className="text-[var(--kp-gold)] text-xs tracking-[0.3em] uppercase font-display">{t.badge}</div>
+              </div>
+              <EditableField value={f.companyName} onChange={(v) => setF("companyName", v)}
+                className="font-display text-2xl md:text-3xl font-bold text-white tracking-tight leading-tight" />
+              <EditableField value={f.tagline} onChange={(v) => setF("tagline", v)}
+                className="text-white/60 text-sm mt-2 tracking-wide" />
             </div>
             <div className="text-right shrink-0">
-              <div className="text-[var(--kp-gold)] font-display text-xl font-bold">
-                <EditableField value={kpNumber} onChange={setKpNumber} className="text-right text-[var(--kp-gold)] font-display text-xl font-bold" />
-              </div>
-              <div className="text-white/50 text-sm mt-1">
-                <EditableField value={kpDate} onChange={setKpDate} className="text-right text-white/50 text-sm" />
-              </div>
+              <EditableField value={f.kpNumber} onChange={(v) => setF("kpNumber", v)}
+                className="text-right text-[var(--kp-gold)] font-display text-xl font-bold" />
+              <EditableField value={f.kpDate} onChange={(v) => setF("kpDate", v)}
+                className="text-right text-white/50 text-sm mt-1" />
             </div>
           </div>
 
           <div className="relative mt-6 pt-6 border-t border-[var(--kp-gold)]/30">
-            <div className="text-xs text-white/40 tracking-widest uppercase mb-1">Кому:</div>
-            <div className="flex gap-6">
-              <div>
-                <EditableField value={clientName} onChange={setClientName} className="text-white/90 font-semibold" />
-              </div>
-              <div>
-                <EditableField value={clientContact} onChange={setClientContact} className="text-white/60" />
-              </div>
+            <div className="text-xs text-white/40 tracking-widest uppercase mb-2">{t.toWhom}</div>
+            <div className="flex gap-6 flex-wrap">
+              <EditableField value={f.clientName} onChange={(v) => setF("clientName", v)}
+                className="text-white/90 font-semibold text-lg" />
+              <EditableField value={f.clientContact} onChange={(v) => setF("clientContact", v)}
+                className="text-white/60" />
             </div>
           </div>
         </div>
@@ -165,190 +346,162 @@ export default function Index() {
         <div className="h-1 bg-gradient-to-r from-[var(--kp-gold)] via-[var(--kp-gold-light)] to-[var(--kp-gold)]" />
 
         {/* INTRO */}
-        <div className="bg-white px-10 py-8 border-b border-[var(--kp-line)]">
-          <EditableField
-            value={introText}
-            onChange={setIntroText}
-            multiline
-            className="text-[var(--kp-text)] leading-relaxed text-sm"
-          />
+        <div className="bg-white px-6 md:px-10 py-8 border-b border-[var(--kp-line)]">
+          <EditableField value={f.intro} onChange={(v) => setF("intro", v)} multiline
+            className="text-[var(--kp-text)] leading-relaxed text-sm" />
         </div>
 
         {/* ADVANTAGES */}
-        <div className="bg-[var(--kp-navy-light)] px-10 py-6 border-b border-[var(--kp-line)]">
-          <div className="text-[var(--kp-gold)] text-xs tracking-[0.25em] uppercase font-display mb-4">Почему выбирают нас</div>
+        <div className="bg-[var(--kp-navy-light)] px-6 md:px-10 py-6 border-b border-[var(--kp-line)]">
+          <div className="text-[var(--kp-gold)] text-xs tracking-[0.25em] uppercase font-display mb-4">{t.whyUs}</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { value: advantage1, onChange: setAdvantage1, icon: "Award" },
-              { value: advantage2, onChange: setAdvantage2, icon: "TrendingUp" },
-              { value: advantage3, onChange: setAdvantage3, icon: "Shield" },
-              { value: advantage4, onChange: setAdvantage4, icon: "UserCheck" },
-            ].map((adv, i) => (
+            {advIcons.map((icon, i) => (
               <div key={i} className="flex items-start gap-2">
-                <Icon name={adv.icon as "Award"} size={16} className="text-[var(--kp-gold)] mt-0.5 shrink-0" />
-                <EditableField value={adv.value} onChange={adv.onChange} className="text-white/80 text-sm" />
+                <Icon name={icon as "Award"} size={16} className="text-[var(--kp-gold)] mt-0.5 shrink-0" />
+                <EditableField value={f.advantages[i]} onChange={(v) => setAdv(i, v)} className="text-white/80 text-sm" />
               </div>
             ))}
           </div>
         </div>
 
         {/* SERVICES TABLE */}
-        <div className="bg-white px-10 py-8 border-b border-[var(--kp-line)]">
+        <div className="bg-white px-6 md:px-10 py-8 border-b border-[var(--kp-line)]">
           <div className="flex items-center justify-between mb-5">
-            <div className="text-[var(--kp-navy)] font-display text-lg font-bold tracking-wide uppercase">Состав предложения</div>
-            <button
-              onClick={addService}
-              className="no-print flex items-center gap-1 text-[var(--kp-gold)] hover:text-[var(--kp-navy)] text-xs tracking-wider uppercase transition-colors duration-200 border border-[var(--kp-gold)] px-3 py-1.5 hover:bg-[var(--kp-gold)]"
-            >
+            <div className="text-[var(--kp-navy)] font-display text-lg font-bold tracking-wide uppercase">{t.composition}</div>
+            <button onClick={addService}
+              className="no-print flex items-center gap-1 text-[var(--kp-gold)] hover:text-[var(--kp-navy)] text-xs tracking-wider uppercase transition-colors duration-200 border border-[var(--kp-gold)] px-3 py-1.5 hover:bg-[var(--kp-gold)]">
               <Icon name="Plus" size={12} />
-              Добавить строку
+              {t.addRow}
             </button>
           </div>
 
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b-2 border-[var(--kp-navy)]">
-                <th className="text-left py-2 pr-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-8">№</th>
-                <th className="text-left py-2 pr-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase">Наименование</th>
-                <th className="text-center py-2 px-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-16">Ед.</th>
-                <th className="text-center py-2 px-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-16">Кол-во</th>
-                <th className="text-right py-2 pl-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-32">Цена</th>
-                <th className="text-right py-2 pl-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-32">Сумма</th>
-                <th className="no-print w-8" />
-              </tr>
-            </thead>
-            <tbody>
-              {services.map((s, i) => (
-                <tr key={s.id} className="border-b border-[var(--kp-line)] hover:bg-[var(--kp-bg-hover)] group transition-colors duration-150">
-                  <td className="py-3 pr-3 text-[var(--kp-muted)] text-xs">{i + 1}</td>
-                  <td className="py-3 pr-3">
-                    <EditableField value={s.name} onChange={(v) => updateService(s.id, "name", v)} className="font-semibold text-[var(--kp-navy)] mb-0.5" />
-                    <EditableField value={s.description} onChange={(v) => updateService(s.id, "description", v)} className="text-[var(--kp-muted)] text-xs" />
-                  </td>
-                  <td className="py-3 px-3 text-center">
-                    <EditableField value={s.unit} onChange={(v) => updateService(s.id, "unit", v)} className="text-[var(--kp-muted)] text-center text-xs" />
-                  </td>
-                  <td className="py-3 px-3 text-center">
-                    <input
-                      type="number"
-                      min={1}
-                      value={s.qty}
-                      onChange={(e) => updateService(s.id, "qty", Number(e.target.value))}
-                      className="bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none w-full text-center text-[var(--kp-text)] transition-colors duration-200"
-                    />
-                  </td>
-                  <td className="py-3 pl-3 text-right">
-                    <input
-                      type="number"
-                      min={0}
-                      value={s.price}
-                      onChange={(e) => updateService(s.id, "price", Number(e.target.value))}
-                      className="bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none w-full text-right text-[var(--kp-text)] transition-colors duration-200"
-                    />
-                  </td>
-                  <td className="py-3 pl-3 text-right font-semibold text-[var(--kp-navy)]">
-                    {formatMoney(s.qty * s.price)}
-                  </td>
-                  <td className="no-print py-3 pl-2">
-                    <button
-                      onClick={() => removeService(s.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600"
-                    >
-                      <Icon name="Trash2" size={14} />
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[560px]">
+              <thead>
+                <tr className="border-b-2 border-[var(--kp-navy)]">
+                  <th className="text-left py-2 pr-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-8">№</th>
+                  <th className="text-left py-2 pr-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase">{t.composition}</th>
+                  <th className="text-center py-2 px-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-16">{t.unit}</th>
+                  <th className="text-center py-2 px-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-16">{t.qty}</th>
+                  <th className="text-right py-2 pl-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-32">{t.price}</th>
+                  <th className="text-right py-2 pl-3 text-[var(--kp-navy)] font-display text-xs tracking-widest uppercase w-32">{t.sum}</th>
+                  <th className="no-print w-8" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {f.services.map((s, i) => (
+                  <tr key={s.id} className="border-b border-[var(--kp-line)] hover:bg-[var(--kp-bg-hover)] group transition-colors duration-150">
+                    <td className="py-3 pr-3 text-[var(--kp-muted)] text-xs">{i + 1}</td>
+                    <td className="py-3 pr-3">
+                      <EditableField value={s.name} onChange={(v) => updateService(s.id, "name", v)} className="font-semibold text-[var(--kp-navy)] mb-0.5" />
+                      <EditableField value={s.description} onChange={(v) => updateService(s.id, "description", v)} className="text-[var(--kp-muted)] text-xs" />
+                    </td>
+                    <td className="py-3 px-3 text-center">
+                      <EditableField value={s.unit} onChange={(v) => updateService(s.id, "unit", v)} className="text-[var(--kp-muted)] text-center text-xs" />
+                    </td>
+                    <td className="py-3 px-3 text-center">
+                      <input type="number" min={1} value={s.qty}
+                        onChange={(e) => updateService(s.id, "qty", Number(e.target.value))}
+                        className="bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none w-full text-center text-[var(--kp-text)] transition-colors duration-200" />
+                    </td>
+                    <td className="py-3 pl-3 text-right">
+                      <input type="number" min={0} value={s.price}
+                        onChange={(e) => updateService(s.id, "price", Number(e.target.value))}
+                        className="bg-transparent border-b border-transparent hover:border-[var(--kp-gold-light)] focus:border-[var(--kp-gold)] outline-none w-full text-right text-[var(--kp-text)] transition-colors duration-200" />
+                    </td>
+                    <td className="py-3 pl-3 text-right font-semibold text-[var(--kp-navy)] whitespace-nowrap">
+                      {formatMoney(s.qty * s.price, f.currency)}
+                    </td>
+                    <td className="no-print py-3 pl-2">
+                      <button onClick={() => removeService(s.id)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600">
+                        <Icon name="Trash2" size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* Totals */}
           <div className="mt-6 flex justify-end">
-            <div className="w-72">
+            <div className="w-full max-w-xs">
               <div className="flex justify-between py-2 text-sm text-[var(--kp-muted)] border-b border-[var(--kp-line)]">
-                <span>Подытог (без НДС)</span>
-                <span className="font-semibold text-[var(--kp-text)]">{formatMoney(subtotal)}</span>
+                <span>{t.subtotal}</span>
+                <span className="font-semibold text-[var(--kp-text)]">{formatMoney(subtotal, f.currency)}</span>
               </div>
               <div className="flex justify-between py-2 text-sm text-[var(--kp-muted)] border-b border-[var(--kp-line)]">
-                <span>НДС 20%</span>
-                <span className="font-semibold text-[var(--kp-text)]">{formatMoney(vat)}</span>
+                <span>{t.vat}</span>
+                <span className="font-semibold text-[var(--kp-text)]">{formatMoney(vat, f.currency)}</span>
               </div>
-              <div className="flex justify-between py-3 text-base font-bold bg-[var(--kp-navy)] text-white px-4 mt-2">
-                <span className="font-display tracking-wide uppercase text-sm">Итого к оплате</span>
-                <span className="text-[var(--kp-gold)]">{formatMoney(total)}</span>
+              <div className="flex justify-between py-3 font-bold bg-[var(--kp-navy)] text-white px-4 mt-2">
+                <span className="font-display tracking-wide uppercase text-sm">{t.total}</span>
+                <span className="text-[var(--kp-gold)]">{formatMoney(total, f.currency)}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* TERMS */}
-        <div className="bg-white px-10 py-8 border-b border-[var(--kp-line)]">
-          <div className="text-[var(--kp-navy)] font-display text-lg font-bold tracking-wide uppercase mb-6">Условия сотрудничества</div>
+        <div className="bg-white px-6 md:px-10 py-8 border-b border-[var(--kp-line)]">
+          <div className="text-[var(--kp-navy)] font-display text-lg font-bold tracking-wide uppercase mb-6">{t.terms}</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { label: "Срок выполнения", value: deliveryDays, onChange: setDeliveryDays, icon: "Clock" },
-              { label: "Гарантийный период", value: warranty, onChange: setWarranty, icon: "ShieldCheck" },
-              { label: "Условия оплаты", value: paymentTerms, onChange: setPaymentTerms, icon: "CreditCard" },
-              { label: "Предложение действительно до", value: validUntil, onChange: setValidUntil, icon: "Calendar" },
-            ].map((term, i) => (
-              <div key={i} className="flex gap-3">
+            {termFields.map((term) => (
+              <div key={term.key} className="flex gap-3">
                 <div className="w-8 h-8 bg-[var(--kp-navy)]/10 flex items-center justify-center shrink-0">
-                  <Icon name={term.icon as "Clock"} size={16} className="text-[var(--kp-navy)]" />
+                  <Icon name={term.icon as "Truck"} size={16} className="text-[var(--kp-navy)]" />
                 </div>
                 <div className="flex-1">
                   <div className="text-[var(--kp-muted)] text-xs tracking-widest uppercase mb-1">{term.label}</div>
-                  <EditableField value={term.value} onChange={term.onChange} className="text-[var(--kp-navy)] font-semibold text-sm" />
+                  <EditableField value={(f as Record<string, string>)[term.key]} onChange={(v) => setF(term.key, v)}
+                    className="text-[var(--kp-navy)] font-semibold text-sm" />
                 </div>
               </div>
             ))}
           </div>
           <div className="mt-6 pt-6 border-t border-[var(--kp-line)]">
-            <div className="text-[var(--kp-muted)] text-xs tracking-widest uppercase mb-2">Дополнительные условия</div>
-            <EditableField value={extraTerms} onChange={setExtraTerms} multiline className="text-[var(--kp-text)] text-sm leading-relaxed" />
+            <div className="text-[var(--kp-muted)] text-xs tracking-widest uppercase mb-2">{t.extraLabel}</div>
+            <EditableField value={f.extra} onChange={(v) => setF("extra", v)} multiline
+              className="text-[var(--kp-text)] text-sm leading-relaxed" />
           </div>
         </div>
 
         {/* FOOTER / CONTACTS */}
-        <div className="bg-[var(--kp-navy)] text-white px-10 py-8">
+        <div className="bg-[var(--kp-navy)] text-white px-6 md:px-10 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <div className="text-[var(--kp-gold)] text-xs tracking-[0.25em] uppercase font-display mb-4">Контактная информация</div>
-              {[
-                { icon: "Phone", value: phone, onChange: setPhone },
-                { icon: "Mail", value: email, onChange: setEmail },
-                { icon: "Globe", value: website, onChange: setWebsite },
-                { icon: "MapPin", value: address, onChange: setAddress },
-              ].map((c, i) => (
-                <div key={i} className="flex items-center gap-3 mb-3">
+              <div className="text-[var(--kp-gold)] text-xs tracking-[0.25em] uppercase font-display mb-4">{t.contacts}</div>
+              {contactFields.map((c) => (
+                <div key={c.key} className="flex items-center gap-3 mb-3">
                   <Icon name={c.icon as "Phone"} size={15} className="text-[var(--kp-gold)] shrink-0" />
-                  <EditableField value={c.value} onChange={c.onChange} className="text-white/80 text-sm" />
+                  <EditableField value={(f as Record<string, string>)[c.key]} onChange={(v) => setF(c.key, v)}
+                    className="text-white/80 text-sm" />
                 </div>
               ))}
             </div>
             <div>
-              <div className="text-[var(--kp-gold)] text-xs tracking-[0.25em] uppercase font-display mb-4">Реквизиты</div>
-              {[
-                { label: "ИНН", value: inn, onChange: setInn },
-                { label: "ОГРН", value: ogrn, onChange: setOgrn },
-              ].map((r, i) => (
-                <div key={i} className="flex gap-4 mb-3">
-                  <span className="text-white/40 text-xs tracking-widest uppercase w-12">{r.label}</span>
-                  <EditableField value={r.value} onChange={r.onChange} className="text-white/80 text-sm" />
+              <div className="text-[var(--kp-gold)] text-xs tracking-[0.25em] uppercase font-display mb-4">{t.requisites}</div>
+              {[{ label: "INN / ИНН", key: "inn" }, { label: "OGRN / ОГРН", key: "ogrn" }].map((r) => (
+                <div key={r.key} className="flex gap-4 mb-3">
+                  <span className="text-white/40 text-xs tracking-widest uppercase w-24 shrink-0">{r.label}</span>
+                  <EditableField value={(f as Record<string, string>)[r.key]} onChange={(v) => setF(r.key, v)}
+                    className="text-white/80 text-sm" />
                 </div>
               ))}
               <div className="mt-6 pt-6 border-t border-[var(--kp-gold)]/20">
-                <div className="text-white/40 text-xs tracking-widest uppercase mb-2">Подпись уполномоченного лица</div>
-                <EditableField value={directorTitle} onChange={setDirectorTitle} className="text-white/60 text-xs" />
-                <EditableField value={directorName} onChange={setDirectorName} className="text-white font-semibold mt-1" />
+                <div className="text-white/40 text-xs tracking-widest uppercase mb-2">{t.signatureLabel}</div>
+                <EditableField value={f.directorTitle} onChange={(v) => setF("directorTitle", v)} className="text-white/60 text-xs" />
+                <EditableField value={f.directorName} onChange={(v) => setF("directorName", v)} className="text-white font-semibold mt-1" />
                 <div className="mt-4 border-b border-white/20 w-48" />
-                <div className="text-white/30 text-xs mt-1">подпись / дата</div>
+                <div className="text-white/30 text-xs mt-1">{t.signatureSub}</div>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-[var(--kp-gold)]/20 flex items-center justify-between">
-            <div className="text-white/30 text-xs">Документ создан в цифровом формате и имеет юридическую силу</div>
-            <div className="text-[var(--kp-gold)] font-display text-sm font-bold tracking-widest">{kpNumber}</div>
+          <div className="mt-8 pt-6 border-t border-[var(--kp-gold)]/20 flex items-center justify-between flex-wrap gap-2">
+            <div className="text-white/30 text-xs">{t.legalNote}</div>
+            <div className="text-[var(--kp-gold)] font-display text-sm font-bold tracking-widest">{f.kpNumber}</div>
           </div>
         </div>
 
