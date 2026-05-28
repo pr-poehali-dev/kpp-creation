@@ -33,7 +33,7 @@ const T = {
     signatureLabel: "Подпись уполномоченного лица",
     signatureSub: "подпись / дата",
     legalNote: "Документ создан в цифровом формате и имеет юридическую силу",
-    advantages: ["10 лет на рынке", "Более 500 сделок", "Гарантия качества", "Персональный менеджер"],
+    advantages: ["Гарантия качества", "Персональный менеджер", "Прозрачность сделки"],
     companyName: "ООО «РЕАЛ ГРУПП»",
     tagline: "Поставки меди — цены ниже рынка LME",
     kpNumber: "КП-2026-001",
@@ -88,7 +88,7 @@ const T = {
     signatureLabel: "Authorised Signatory",
     signatureSub: "signature / date",
     legalNote: "This document is created in digital format and has legal validity",
-    advantages: ["10 years in market", "500+ deals closed", "Quality certified", "Dedicated manager"],
+    advantages: ["Quality guarantee", "Dedicated manager", "Deal transparency"],
     companyName: "REAL GROUP LLC",
     tagline: "Copper supply — below LME market price",
     kpNumber: "CO-2026-001",
@@ -143,7 +143,7 @@ const T = {
     signatureLabel: "अधिकृत हस्ताक्षरकर्ता",
     signatureSub: "हस्ताक्षर / तारीख",
     legalNote: "यह दस्तावेज़ डिजिटल प्रारूप में बनाया गया है और कानूनी रूप से वैध है",
-    advantages: ["बाज़ार में 10 वर्ष", "500+ सौदे पूर्ण", "गुणवत्ता प्रमाणित", "समर्पित प्रबंधक"],
+    advantages: ["गुणवत्ता गारंटी", "समर्पित प्रबंधक", "सौदे की पारदर्शिता"],
     companyName: "REAL GROUP LLC",
     tagline: "तांबा आपूर्ति — LME बाज़ार मूल्य से कम",
     kpNumber: "CO-2026-001",
@@ -244,7 +244,7 @@ export default function Index() {
     { id: "hi" as Lang, label: "हिंदी", flag: "🇮🇳" },
   ];
 
-  const advIcons = ["Award", "TrendingUp", "ShieldCheck", "UserCheck"];
+  const advIcons = ["ShieldCheck", "UserCheck", "Eye"];
   const contactFields = [
     { icon: "Phone", key: "phone" },
     { icon: "Mail", key: "email" },
