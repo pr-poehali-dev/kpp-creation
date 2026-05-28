@@ -1,9 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    --kp-navy: #0f1f38;
+    --kp-navy-light: #162a4a;
+    --kp-gold: #b49150;
+    --kp-gold-light: #d4b06a;
+    --kp-bg: #f5f2ec;
+    --kp-bg-hover: #faf8f4;
+    --kp-text: #2c2c2c;
+    --kp-muted: #7a7a7a;
+    --kp-line: #e8e3d8;
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -97,5 +108,28 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: "IBM Plex Sans", sans-serif;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .kp-document {
+    padding-top: 0 !important;
+    max-width: 100% !important;
+  }
+
+  @page {
+    margin: 1cm;
+    size: A4;
   }
 }
